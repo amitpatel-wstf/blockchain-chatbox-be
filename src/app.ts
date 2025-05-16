@@ -27,7 +27,8 @@ app.post("/api/prompt",async(req:Request,res:Response)=>{
         if(prompt){
             const response = await agentRouter.handlePrompt(prompt);
             console.log("Response==>",response);
-            res.status(200).json({message: response.response, prompt:response?.prompt, hint:response.schemaHint, status:true});
+            // @ts-ignore
+            res.status(200).json({message: response?.data, summary:response.summary,  prompt:prompt, status:true});
             
         }else{
             res.status(404).json({message : "Prompt not Found", status: false});
