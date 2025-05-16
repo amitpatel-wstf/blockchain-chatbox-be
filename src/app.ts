@@ -20,6 +20,10 @@ app.use(express.json());
 app.use(cors({credentials:true,origin:"*"}))
 // app.use('/api/tokens', );
 
+app.get("/",(req:Request, res:Response)=>{
+    res.status(200).json({message:"Server helth is OK", status:true})
+})
+
 app.post("/api/prompt",async(req:Request,res:Response)=>{
     try {
         const {prompt }= req.body;
