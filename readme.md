@@ -118,9 +118,9 @@ A powerful SDK for building blockchain-powered chat applications with AI capabil
 ## Installation
 
 ```bash
-npm install blockchain-chat-sdk
+npm install blockchain-ai-chat
 # or
-yarn add blockchain-chat-sdk
+yarn add blockchain-ai-chat
 ```
 
 ## Prerequisites
@@ -134,18 +134,19 @@ yarn add blockchain-chat-sdk
 1. Install the package:
 
 ```bash
-npm install blockchain-chat-sdk
+npm install blockchain-ai-chat
 ```
 
 2. Import and initialize the SDK:
 
 ```typescript
-import { createBlockchainChatSDK } from 'blockchain-chat-sdk';
+import { createBlockchainChatSDK } from 'blockchain-ai-chat';
 
 // Initialize the SDK with your API keys
 const sdk = createBlockchainChatSDK({
   openaiApiKey: 'your-openai-api-key',
   moralisApiKey: 'your-moralis-api-key',
+  port?: 3000 as optional
 });
 ```
 
