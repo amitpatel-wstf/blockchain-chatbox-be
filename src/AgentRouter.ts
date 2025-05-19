@@ -5,11 +5,35 @@ import dotenv from "dotenv";
 import config from "./config";
 import fs from "fs";
 import path from "path";
-import { HUMAN_RESPONSE_PROMPT, keywords } from "./tools/constant";
+import { keywords, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
 import { walletTools } from "./tools/wallet-tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
+
+// Define types
+export type ToolParams = Record<string, string>;
+
+export interface Tool {
+  name: string;
+  requiredParams: string[];
+  run: (params: ToolParams) => Promise<any>;
+  dataSchema?: string;
+}
+
+export interface AgentResponse {
+  prompt: string;
+  response: string;
+  schemaHint?: string;
+}
+
+export interface ApiResponse {
+  message: string;
+  summary: string;
+  prompt: string;
+  status: boolean;
+  data?: any;
+}
 
 dotenv.config();
 
@@ -19,20 +43,6 @@ const predefineQuestions = [
     name : ""
   }
 ]
-
-// Tool interface definition
-export interface Tool {
-  name: string;
-  requiredParams: string[];
-  run: (params: Record<string, string>) => Promise<any>;
-  dataSchema?: string; // Added for frontend use
-}
-
-interface AgentResponse {
-  prompt: string;
-  response: string;
-  schemaHint?: string;
-}
 
 // Agent class definition
 export class AIAgentRouter {
@@ -73,37 +83,6 @@ export class AIAgentRouter {
     if (userInput.includes("vitalik.eth")) return { domain: "vitalik.eth" };
     return {};
   }
-
-  // async handlePrompt(prompt: string): Promise<AgentResponse> {
-  //   const tool = this.matchTool(prompt);
-  //   if (!tool) return { prompt, response: "No matching tool found for this prompt." };
-
-  //   const inputParams = this.extractParams(prompt);
-  //   const missingParams = tool.requiredParams.filter(
-  //     (param) => !(param in inputParams)
-  //   );
-
-  //   if (missingParams.length > 0) {
-  //     return {
-  //       prompt,
-  //       response: `This prompt requires these fields, please provide: [${missingParams.join(", ")}].`
-  //     };
-  //   }
-
-  //   try {
-  //     const result = await tool.run(inputParams);
-  //     return {
-  //       prompt,
-  //       response: JSON.stringify(result, null, 2),
-  //       schemaHint: tool.dataSchema || undefined
-  //     };
-  //   } catch (error) {
-  //     return {
-  //       prompt,
-  //       response: `Tool execution failed: ${error}`
-  //     };
-  //   }
-  // }
 
    async handlePrompt(prompt: string): Promise<string | { data:string, summary:string }> {
     const toolNames = this.tools.map(t => t.name);
@@ -166,7 +145,7 @@ Return JSON: { tool: "toolName", params: { ...requiredParams } }
     const response = await this.model.invoke(instruction);
 
     try {
-      const rawContent = response?.content || "";
+      const rawContent = response?.content;
       // @ts-ignore
       const cleaned = rawContent?.replace(/```json/g, "").replace(/```/g, "").trim();
 
@@ -213,20 +192,8 @@ async function test(){
     const agent = new AIAgentRouter(config.OPENAI_API_KEY);
     moralisTools.forEach((tool: any) => agent.registerTool(tool));
 
-    const prompts = [
-      "What's in my wallet 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "What NFTs do I own at 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "Show my DeFi positions for 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj",
-      "What is my net worth at 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "Generate a PnL for my wallet 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj",
-      "What token approvals have I made for 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "Show my swap history for 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj",
-      "What chains am I active on 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "What's the domain for 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
-      "What wallet owns vitalik.eth?"
-    ];
-
-    const results: AgentResponse[] = [];
+    
+    const results: ApiResponse[] = [];
 
     // for (const prompt of prompts) {
     //   const result = await agent.handlePrompt(prompt);
