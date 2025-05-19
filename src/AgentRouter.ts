@@ -1,25 +1,11 @@
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
-import { z } from "zod";
-import { initMoralis, tools as moralisTools, tools } from "./tools";
-import dotenv from "dotenv";
-import config from "./config";
-import fs from "fs";
-import path from "path";
-import { keywords, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
+import { ChatOpenAI } from "@langchain/openai";
+import { tools } from "./tools";
 import { walletTools } from "./tools/wallet-tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
-
-// Define types
-export type ToolParams = Record<string, string>;
-
-export interface Tool {
-  name: string;
-  requiredParams: string[];
-  run: (params: ToolParams) => Promise<any>;
-  dataSchema?: string;
-}
+import { HUMAN_RESPONSE_PROMPT, keywords } from "./tools/constant";
+import { Tool } from "./tools/types";
 
 export interface AgentResponse {
   prompt: string;
@@ -35,26 +21,24 @@ export interface ApiResponse {
   data?: any;
 }
 
-dotenv.config();
-
-const predefineQuestions = [
-  {
-    keyword:"",
-    name : ""
-  }
-]
+const predefineQuestions: Array<{ keyword: string; name: string }> = [];
 
 // Agent class definition
 export class AIAgentRouter {
   private tools: Tool[] = [];
   private model: ChatOpenAI;
 
-  constructor(apiKey: string) {
+  constructor(openaiApiKey: string) {
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key is required');
+    }
+
     this.model = new ChatOpenAI({
       modelName: "gpt-4o",
-      openAIApiKey: apiKey,
+      openAIApiKey: openaiApiKey,
       temperature: 0.3,
     });
+
     // Load all tools
     this.tools = [
       ...walletTools,
@@ -71,17 +55,58 @@ export class AIAgentRouter {
 
   private matchTool(userInput: string): Tool | undefined {
     const normalizedPrompt = userInput.toLowerCase();
-      
-    const matched = predefineQuestions.find(q => q.keyword.includes(normalizedPrompt)) && keywords.find(k => normalizedPrompt.includes(k.keyword));
-    if (!matched) return undefined;
-    return this.tools.find(t => t.name === matched.name);
+    
+    // First check predefined questions
+    const matchedQuestion = predefineQuestions.find(q => 
+      q.keyword && normalizedPrompt.includes(q.keyword.toLowerCase())
+    );
+    
+    if (matchedQuestion) {
+      return this.tools.find(t => t.name === matchedQuestion.name);
+    }
+    
+    // Then check keywords
+    const matchedKeyword = keywords.find(k => 
+      k.keyword && normalizedPrompt.includes(k.keyword.toLowerCase())
+    );
+    
+    return matchedKeyword ? this.tools.find(t => t.name === matchedKeyword.name) : undefined;
   }
 
   private extractParams(userInput: string): Record<string, string> {
-    const match = userInput.match(/0x[a-fA-F0-9]{40}/);
-    if (match) return { address: match[0], chain: "0x1" };
-    if (userInput.includes("vitalik.eth")) return { domain: "vitalik.eth" };
-    return {};
+    const params: Record<string, string> = {};
+    
+    // Extract Ethereum address
+    const ethAddressMatch = userInput.match(/0x[a-fA-F0-9]{40}/);
+    if (ethAddressMatch) {
+      params.address = ethAddressMatch[0];
+      params.chain = params.chain || '0x1'; // Default to Ethereum mainnet
+    }
+    
+    // Extract ENS domain
+    if (userInput.includes('.eth')) {
+      const ensMatch = userInput.match(/[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/);
+      if (ensMatch) {
+        params.domain = ensMatch[0];
+      }
+    }
+    
+    // Extract chain if mentioned
+    const chainMatch = userInput.match(/(ethereum|eth|polygon|bsc|arbitrum|optimism|avalanche)/i);
+    if (chainMatch) {
+      const chainMap: Record<string, string> = {
+        'ethereum': '0x1',
+        'eth': '0x1',
+        'polygon': '0x89',
+        'bsc': '0x38',
+        'arbitrum': '0xa4b1',
+        'optimism': '0xa',
+        'avalanche': '0xa86a'
+      };
+      params.chain = chainMap[chainMatch[0].toLowerCase()] || params.chain || '0x1';
+    }
+    
+    return params;
   }
 
    async handlePrompt(prompt: string): Promise<string | { data:string, summary:string }> {
@@ -181,31 +206,12 @@ Return JSON: { tool: "toolName", params: { ...requiredParams } }
   }
 }
 
-
-}
-
-// === Vitest Test Case ===
-// describe("AIAgentRouter", () => {
-//   it("should handle prompts correctly", async () => {
-async function test(){
-    await initMoralis(config.MORALIS_KEY);
-    const agent = new AIAgentRouter(config.OPENAI_API_KEY);
-    moralisTools.forEach((tool: any) => agent.registerTool(tool));
-
-    
-    const results: ApiResponse[] = [];
-
-    // for (const prompt of prompts) {
-    //   const result = await agent.handlePrompt(prompt);
-    //   results.push(result);
-    //   console.log(`\nPrompt: ${result.prompt}\nResponse: ${result.response}`);
-    //   if (result.schemaHint) console.log(`[Visualization Hint]: ${result.schemaHint}`);
-    // }
-
-    // fs.writeFileSync(
-    //   path.resolve(__dirname, "./agent-output.json"),
-    //   JSON.stringify(results, null, 2),
-    //   "utf8"
+// function test() {
+//   console.log('AIAgentRouter test function');
+  // Example usage:
+  // const router = new AIAgentRouter("your-openai-api-key");
+  // router.handlePrompt("What's the price of ETH?").then(console.log);
+// }
     // );
 }
 

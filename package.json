@@ -2,7 +2,8 @@
   "name": "ai-chat",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/app.js",
+  "types": "dist/app.types.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx tsc -b && node dist/app.js",
