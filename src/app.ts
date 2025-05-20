@@ -65,6 +65,6 @@ app.post("/api/prompt", async (req: Request, res: Response) => {
 });
 
 // Start the server
-app.listen(PORT, () => {
+app.listen(PORT, async() => {
   console.log(`Server is running on port ${PORT}`);
 });

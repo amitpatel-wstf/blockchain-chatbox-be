@@ -1,3 +1,4 @@
+import Moralis from 'moralis';
 import { AIAgentRouter } from './AgentRouter';
 import { initMoralis } from './tools';
 
@@ -30,6 +31,20 @@ export class BlockchainChatSDK {
     
     // Initialize the AI Agent Router with OpenAI key
     this.agentRouter = new AIAgentRouter(this.config.openaiApiKey);
+  }
+
+  /**
+   * Initialize the SDK with configuration
+   * @param config The configuration object
+   */
+
+  public async InitializeMoralis(){
+    try {
+      await Moralis.start({ apiKey: this.config.moralisApiKey });
+      console.log("Moralis initialized");
+    } catch (error) {
+      console.error("Error initializing Moralis:", error);
+    }
   }
 
   /**

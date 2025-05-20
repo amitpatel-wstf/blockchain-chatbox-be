@@ -1,3 +1,5 @@
+import { toolSchemas } from "./tool-schemas";
+
 export   const keywords = [
   // 👜 Wallet
   { keyword: "what's in my wallet", name: "getWalletTokenBalancesPrices" },
@@ -161,3 +163,57 @@ export const prompts = [
   "What's the domain for 5VvSStWPjkDTUqp4J2XMwN2MEoXePsZH9PApaaazpoGj ?",
   "What wallet owns vitalik.eth?"
 ];
+
+
+
+export const getInstruction = ( toolNames: string[], toolDescriptions: Record<string, any>,prompt: string) => `
+You are a blockchain AI assistant. You help users query wallet, token, NFT, DeFi, and Solana data using Moralis APIs.
+
+At runtime, follow this instruction set to choose the right tool dynamically:
+
+1. Parse the user prompt.
+2. Identify the intent (e.g., wallet balance, token price, NFT ownership).
+3. Match the intent to a tool name from the available registry using natural language understanding.
+4. Identify and extract all required parameters for the tool.
+   - For EVM chains: use chain format like "0x1", "0x89", etc.
+   - For Solana: use "mainnet" for the network.
+   - Do not return chains like "eth", "polygon" — this causes SDK error: [C0005] Invalid provided chain.
+5. If required params are missing, return a message listing missing fields like:  
+   "This prompt requires these fields: [field1, field2]"
+6. If chain is not provided, use eth chain as default chain 0x1  
+   
+Examples:
+- ✅ Correct EVM chain: "chain": "0x1"
+- ❌ Incorrect chain: "chain": "eth" → results in Moralis SDK Core Error: [C0005]
+
+6. For combined prompts (e.g. "compare ETH and SOL holdings"):
+   - Select multiple tools if needed (e.g., getNativeBalance + balance)
+
+Respond in JSON format (no markdown or \`\`\`):
+{
+  "tool": "toolName",
+  "params": {
+    "chain": "0x1",
+    "address": "0x..."
+  }
+}
+
+Never return markdown code blocks. Only return clean JSON object. Do not format response with \`\`\`.
+
+Available tools and descriptions will be provided.
+
+
+Available tools:
+${toolNames.map(t => `- ${t}`).join("\n")}
+
+Available tool schemas:
+${JSON.stringify(toolSchemas, null, 2)}
+
+Each tool has required parameters defined below:
+${JSON.stringify(toolDescriptions, null, 2)}
+
+User prompt:
+${prompt}
+
+Return JSON: { tool: "toolName", params: { ...requiredParams } }
+`;
