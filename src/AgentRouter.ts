@@ -6,6 +6,7 @@ import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
 import { getInstruction, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
 import { Tool } from "./tools/types";
+import { Tool as Tools } from "@langchain/core/tools";
 
 export interface AgentResponse {
   prompt: string;
@@ -89,6 +90,7 @@ export class AIAgentRouter {
       return `Failed to parse AI result or run tool: ${err}`;
     }
   }
+
 
   async NLP(result: string): Promise<string> {
     try {
