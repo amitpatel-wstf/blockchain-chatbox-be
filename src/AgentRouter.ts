@@ -6,7 +6,7 @@ import { walletTools } from "./tools/wallet-tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
-import { HUMAN_RESPONSE_PROMPT } from "./tools/constant";
+import { getInstruction, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
 import { Tool } from "./tools/types";
 import { toolSchemas } from "./tools/tool-schemas";
 

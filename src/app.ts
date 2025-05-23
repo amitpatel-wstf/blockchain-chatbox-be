@@ -3,13 +3,11 @@ import config from './config';
 import cors from 'cors';
 import { BlockchainChatSDK } from './BlockchainChatSDK';
 import { prompts } from './tools/constant';
-import { Agent } from './Agent';
 export {BlockchainChatSDK};
 
 
 // Initialize Express app
 const app = express();
-const agent = new Agent();
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 // Initialize SDK with configuration
@@ -53,7 +51,6 @@ app.post("/api/prompt", async (req: Request, res: Response) => {
 
     console.log("Processing prompt:", prompt);
     const response = await sdk.handlePrompt(prompt);
-    // const response = await agent.handlePrompt(prompt);
     console.log("Response:", response);
     
     res.status(200).json(response);
@@ -71,4 +68,3 @@ app.post("/api/prompt", async (req: Request, res: Response) => {
 app.listen(PORT, async() => {
   console.log(`Server is running on port ${PORT}`);
 });
-
