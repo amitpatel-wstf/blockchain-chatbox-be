@@ -26,6 +26,9 @@ export interface ApiResponse {
 
 
 export const chains = [
+  { "chain": "eth",           "hexChainId": "0x1"    },
+  { "chain": "bnb",           "hexChainId": "0x38"   },
+  { "chain": "bsc",           "hexChainId": "0x38"   },
   { "chain": "Ethereum Mainnet",           "hexChainId": "0x1"    },
   { "chain": "BNB Smart Chain Mainnet",     "hexChainId": "0x38"   },
   { "chain": "Base",                        "hexChainId": "0x2105" },
@@ -144,22 +147,34 @@ export class AIAgentRouter {
       console.log("Params => ", params);
 
       // Check and replace chain parameter with hexChainId (needs to be improved!!)
-      if (params.chain) {
-        const chainInfo = chains.find(c => 
-          c.chain.toLowerCase() === params.chain.toLowerCase()
-        );
+      // if (params.chain) {
+      //   const chainInfo = chains.find(c => 
+      //     c.chain.toLowerCase() === params.chain.toLowerCase()
+      //   );
         
+      //   if (chainInfo) {
+      //     params.chain = chainInfo.hexChainId;
+      //   } else {
+      //     return `Invalid chain specified: ${params.chain}`;
+      //   }
+      // }
+
+      if (params.chain) {
+        const inputChain = params.chain.trim().toLowerCase();
+        const chainInfo = chains.find(c => c.chain.trim().toLowerCase() === inputChain);
+      
         if (chainInfo) {
           params.chain = chainInfo.hexChainId;
         } else {
           return `Invalid chain specified: ${params.chain}`;
         }
       }
+      
 
       console.log("After mapping with hexcode: ");
       console.log("Params => ", params);
 
-      const implementationTool = [...walletTools, ...nftTools, ...tokenTools, ...marketTools, ...tools, ...toolz]
+      const implementationTool = [...walletTools, ...nftTools, ...tokenTools, ...marketTools, ...tools]
         .find(t => t.name === toolName);
 
       if (!implementationTool) {
