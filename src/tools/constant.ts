@@ -164,56 +164,153 @@ export const prompts = [
   "What wallet owns vitalik.eth?"
 ];
 
+export const chains = [
+  { "chain": "Ethereum Mainnet",           "hexChainId": "0x1"    },
+  { "chain": "BNB Smart Chain Mainnet",     "hexChainId": "0x38"   },
+  { "chain": "Base",                        "hexChainId": "0x2105" },
+  { "chain": "Berachain",                   "hexChainId": "0x138de"},
+  { "chain": "Arbitrum One",                "hexChainId": "0xa4b1" },
+  { "chain": "Avalanche C-Chain",           "hexChainId": "0xa86a" },
+  { "chain": "Sonic Mainnet",               "hexChainId": "0x92"   },
+  { "chain": "Hemi",                        "hexChainId": "0xa867" },
+  { "chain": "Polygon Mainnet",             "hexChainId": "0x89"   },
+  { "chain": "Zircuit Mainnet",             "hexChainId": "0xbf04" },
+  { "chain": "Core Blockchain Mainnet",     "hexChainId": "0x45c"  },
+  { "chain": "Unichain",                    "hexChainId": "0x82"   },
+  { "chain": "Sei Network",                 "hexChainId": "0x531"  },
+  { "chain": "Cronos Mainnet",              "hexChainId": "0x19"   },
+  { "chain": "Bitlayer Mainnet",            "hexChainId": "0x310c5"},
+  
+  { "chain": "Metis Andromeda Mainnet",     "hexChainId": "0x440"  },
+  { "chain": "Aurora Mainnet",              "hexChainId": "0x4E454152" },
+  { "chain": "Fantom Opera",                "hexChainId": "0xFA"   },
+  { "chain": "XDC Mainnet",                 "hexChainId": "0x32"   },
+  { "chain": "Evmos Mainnet",               "hexChainId": "0x2329" },
+  { "chain": "Theta Mainnet",               "hexChainId": "0x169"  },
+  { "chain": "Filecoin Main Network",       "hexChainId": "0x13A"  },
+  { "chain": "OKXChain",                    "hexChainId": "0x42"   },
+  { "chain": "Moonbeam",                    "hexChainId": "0x504"  },
+  { "chain": "Gnosis",                      "hexChainId": "0x64"   },
+  { "chain": "Celo",                        "hexChainId": "0xA4EC" },
+  
+  { "chain": "Optimism",                    "hexChainId": "0xA"    },
+  { "chain": "Moonriver",                   "hexChainId": "0x505"  },
+  { "chain": "Klaytn Cypress",              "hexChainId": "0x2019" },
+  { "chain": "Ronin Mainnet",               "hexChainId": "0x7E4"  },
+  { "chain": "Palm Mainnet",                "hexChainId": "0x2A15C308D" },
+  { "chain": "Mantle",                      "hexChainId": "0x1388" },
+  { "chain": "PulseChain",                  "hexChainId": "0x171"  },
+  { "chain": "zkSync Mainnet",              "hexChainId": "0x144"  },
+  { "chain": "Fuse Mainnet",                "hexChainId": "0x7A"   },
+  { "chain": "Harmony Mainnet (Shard 0)",   "hexChainId": "0x63564C40" },
+  { "chain": "IoTeX Mainnet",               "hexChainId": "0x1251" },
+  { "chain": "Telos EVM Mainnet",           "hexChainId": "0x28"   },
+  { "chain": "Boba Network",                "hexChainId": "0x120"  },
+  { "chain": "Boba BNB Mainnet",            "hexChainId": "0xDBE0" },
+  { "chain": "Shiden",                      "hexChainId": "0x150"  },
+  
+  { "chain": "Arbitrum Nova",               "hexChainId": "0xA4EA" },
+  { "chain": "Ethereum Classic",            "hexChainId": "0x3D"   },
+  { "chain": "Energi Mainnet",              "hexChainId": "0x9B4D" },
+  { "chain": "Bitgert (Brise)",             "hexChainId": "0x7F08" },
+  { "chain": "Crab Network",                "hexChainId": "0x2C"   },
+  { "chain": "Energy Web Chain",            "hexChainId": "0xF6"   },
+  { "chain": "TomoChain",                   "hexChainId": "0x58"   },
+  { "chain": "Syscoin",                     "hexChainId": "0x39"   },
+  { "chain": "Ubiq",                        "hexChainId": "0x8"    },
+  { "chain": "LACHAIN",                     "hexChainId": "0xE1"   },
+  { "chain": "Milkomeda A1",                "hexChainId": "0x7D2"  },
+  { "chain": "HPB",                         "hexChainId": "0x10D"  },
+  { "chain": "CUBE Chain",                  "hexChainId": "0x71A"  },
+  { "chain": "GoChain",                     "hexChainId": "0x3C"   }
+]
 
 
-export const getInstruction = ( toolNames: string[], toolDescriptions: Record<string, any>,prompt: string) => `
-You are a blockchain AI assistant. You help users query wallet, token, NFT, DeFi, and Solana data using Moralis APIs.
 
-At runtime, follow this instruction set to choose the right tool dynamically:
 
-1. Parse the user prompt.
-2. Identify the intent (e.g., wallet balance, token price, NFT ownership).
-3. Match the intent to a tool name from the available registry using natural language understanding.
-4. Identify and extract all required parameters for the tool.
-   - For EVM chains: use chain format like "0x1", "0x89", etc.
-   - For Solana: use "mainnet" for the network.
-   - Do not return chains like "eth", "polygon" — this causes SDK error: [C0005] Invalid provided chain.
-5. If required params are missing, return a message listing missing fields like:  
-   "This prompt requires these fields: [field1, field2]"
-6. If chain is not provided, use eth chain as default chain 0x1  
+
+// export const getInstruction = ( toolNames: string[], toolDescriptions: Record<string, any>,prompt: string) => `
+// You are a blockchain AI assistant. You help users query wallet, token, NFT, DeFi, and Solana data using Moralis APIs.
+
+// At runtime, follow this instruction set to choose the right tool dynamically:
+
+// 1. Parse the user prompt.
+// 2. Identify the intent (e.g., wallet balance, token price, NFT ownership).
+// 3. Match the intent to a tool name from the available registry using natural language understanding.
+// 4. Identify and extract all required parameters for the tool.
+//    - For EVM chains: use chain format like "0x1", "0x89", etc.
+//    - For Solana: use "mainnet" for the network.
+//    - Do not return chains like "eth", "polygon" — this causes SDK error: [C0005] Invalid provided chain.
+// 5. If required params are missing, return a message listing missing fields like:  
+//    "This prompt requires these fields: [field1, field2]"
+// 6. If chain is not provided, use eth chain as default chain 0x1  
    
-Examples:
-- ✅ Correct EVM chain: "chain": "0x1"
-- ❌ Incorrect chain: "chain": "eth" → results in Moralis SDK Core Error: [C0005]
+// Examples:
+// - ✅ Correct EVM chain: "chain": "0x1"
+// - ❌ Incorrect chain: "chain": "eth" → results in Moralis SDK Core Error: [C0005]
 
-6. For combined prompts (e.g. "compare ETH and SOL holdings"):
-   - Select multiple tools if needed (e.g., getNativeBalance + balance)
+// 6. For combined prompts (e.g. "compare ETH and SOL holdings"):
+//    - Select multiple tools if needed (e.g., getNativeBalance + balance)
 
-Respond in JSON format (no markdown or \`\`\`):
+// Respond in JSON format (no markdown or \`\`\`):
+// {
+//   "tool": "toolName",
+//   "params": {
+//     "chain": "0x1",
+//     "address": "0x..."
+//   }
+// }
+
+// Never return markdown code blocks. Only return clean JSON object. Do not format response with \`\`\`.
+
+// Available tools and descriptions will be provided.
+
+
+// Available tools:
+// ${toolNames.map(t => `- ${t}`).join("\n")}
+
+// Available tool schemas:
+// ${JSON.stringify(toolSchemas, null, 2)}
+
+// Each tool has required parameters defined below:
+// ${JSON.stringify(toolDescriptions, null, 2)}
+
+// User prompt:
+// ${prompt}
+
+// Return JSON: { tool: "toolName", params: { ...requiredParams } }
+// `;
+
+
+
+export const getInstruction = (
+  toolNames: string[],
+  toolDescriptions: Record<string, any>,
+  prompt: string
+) => `You are an intelligent assistant designed to select the most appropriate tool from a given list, extract the necessary parameters from a user's prompt, and output the result in a structured JSON format.
+
+Available Tools:
+${toolNames}
+
+Tools Description
+${toolDescriptions}
+
+User Prompt:
+${prompt}
+
+Instructions:
+1. From the list of tools provided, identify the one that best matches the user's intent.
+2. Determine the required parameters for the selected tool.
+3. Extract these parameters from the user's prompt.
+4. If any required parameters are missing, ask the user to provide them.
+5. Output the result in the following JSON format:
+
 {
-  "tool": "toolName",
+  "tool": "selectedToolName",
   "params": {
-    "chain": "0x1",
-    "address": "0x..."
+    "param1": "value1",
+    "param2": "value2"
   }
 }
 
-Never return markdown code blocks. Only return clean JSON object. Do not format response with \`\`\`.
-
-Available tools and descriptions will be provided.
-
-
-Available tools:
-${toolNames.map(t => `- ${t}`).join("\n")}
-
-Available tool schemas:
-${JSON.stringify(toolSchemas, null, 2)}
-
-Each tool has required parameters defined below:
-${JSON.stringify(toolDescriptions, null, 2)}
-
-User prompt:
-${prompt}
-
-Return JSON: { tool: "toolName", params: { ...requiredParams } }
-`;
+Ensure that the output is a valid JSON object. If you're unable to determine the appropriate tool or extract the necessary parameters, provide a clear message indicating what information is missing.`;

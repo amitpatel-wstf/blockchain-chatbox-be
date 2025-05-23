@@ -7,7 +7,8 @@ import { walletTools } from "./tools/wallet-tools";
 import { tools } from "./tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
-// import { HumanChatMessage, AIChatMessage } from "langchain";
+import { HumanMessage, AIMessage } from "@langchain/core/messages";
+import { toolSchemas } from "./tools/tool-schemas";
 
 class SumTool extends Tool {
     name = "sum_numbers";
@@ -35,37 +36,65 @@ export class Agent {
         this.model = new ChatOpenAI({
             modelName: "gpt-4",      // or whichever model you have access to
             temperature: 0,
-            apiKey:config.OPENAI_API_KEY
+            apiKey: config.OPENAI_API_KEY
         });
     }
 
     async handlePrompt(prompt: string) {
-       
 
 
-        // 3. Create the agent, passing in our tool
-        const executor = await initializeAgentExecutorWithOptions(
-            [...marketTools,...walletTools,...tokenTools,...nftTools,...tools],
-            // [this.sumTool],
-            this.model,
-            {
-                agentType: "chat-conversational-react-description",
-                verbose: true,
-            }
-        );
+        // try {
+        //     let agentTools = [ ...tools];
+        //     // 3. Create the agent, passing in our tool
+        //     // const executor = await initializeAgentExecutorWithOptions(
+        //     //     [...marketTools,...walletTools,...tokenTools,...nftTools,...tools],
+        //     //     // [this.sumTool],
+        //     //     this.model,
+        //     //     {
+        //     //         agentType: "chat-conversational-react-description",
+        //     //         verbose: true,
+        //     //     }
+        //     // );
 
-        // const userInput = "12 of 13 kitne hote hai ? ";
-        const response = await executor.call({
-            input: prompt,
-        });
+        //     // const final = await executor.run(prompt);
+        //     // console.log("🛠️  Agent + Tool result:\n", final);
+        //     // return final;
 
-        // console.log("Agent response:",response.output);
-        // for (const [msg,index] of response.output) {
-        //     // if (msg instanceof any) {
-        //     console.log("==> ",index,"=> ", msg.text);
-        //     // }
+
+        //     // 1️⃣ First LLM call to decide which tool to use
+        //     const initial = await this.model.invoke([
+        //         new HumanMessage(prompt),
+        //     ], { tools: agentTools });
+        //     console.log("Initial response:\n", initial);
+        //     // 2️⃣ Check if a tool was requested
+        //     const calls = initial.tool_calls ?? [];
+        //     if (calls.length === 0) {
+        //         console.log("No tool requested:", initial.content);
+        //         return;
+        //     }
+
+        //     // 3️⃣ We only support one tool here, so grab the first
+        //     const call = calls[0];
+        //     console.log("Tool requested:", call.name);
+        //     const tool = tools.find((t) => t.name === call.name)!;
+        //     console.log("Tool found:", tool.name);
+
+        //     // 4️⃣ Execute the tool
+        //     const toolOutput = await tool.func(call.args?.query ?? "");
+
+        //     // 5️⃣ Append tool output and ask the LLM to summarize
+        //     const followUp = await this.model.invoke([
+        //         new HumanMessage("Here are the results of the tool call:"),
+        //         new AIMessage(toolOutput),
+        //         new HumanMessage("Please summarize these positions for me in plain language."),
+        //     ]);
+
+        //     console.log("Final answer:\n", followUp.content);
+        //     return followUp.content;
+        // } catch (error) {
+        //     console.log("Error in handlePrompt:", error);
+        //     return "Error";
         // }
-        return response.output;
     }
 
 }

@@ -52,8 +52,8 @@ app.post("/api/prompt", async (req: Request, res: Response) => {
     }
 
     console.log("Processing prompt:", prompt);
-    // const response = await sdk.handlePrompt(prompt);
-    const response = await agent.handlePrompt(prompt);
+    const response = await sdk.handlePrompt(prompt);
+    // const response = await agent.handlePrompt(prompt);
     console.log("Response:", response);
     
     res.status(200).json(response);

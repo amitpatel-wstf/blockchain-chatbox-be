@@ -23,7 +23,7 @@ router.post('/:tool', async (req : Request, res:Response):Promise<any> => {
       });
     }
 
-    const result = await selected.run(input);
+    const result = await selected.func(input);
     res.status(200).json({ data: result, schemaHint: selected.dataSchema || null });
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Execution failed' });

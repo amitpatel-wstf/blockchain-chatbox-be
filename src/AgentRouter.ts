@@ -4,7 +4,7 @@ import { walletTools } from "./tools/wallet-tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
-import { getInstruction, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
+import { chains, getInstruction, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
 import { Tool } from "./tools/types";
 import { Tool as Tools } from "@langchain/core/tools";
 
@@ -33,9 +33,9 @@ export class AIAgentRouter {
     }
 
     this.model = new ChatOpenAI({
-      modelName: "gpt-4o",
+      modelName: "o4-mini",
       openAIApiKey: openaiApiKey,
-      temperature: 0.3,
+      // temperature: 0.3,
     });
 
     // Load all tools
@@ -82,8 +82,13 @@ export class AIAgentRouter {
       if (missing.length > 0) {
         return `This prompt requires these fields: [${missing.join(", ")}].`;
       }
+      console.log("Before Tools => ",tool,parsed.params);
+      const chain = parsed.params?.chain;
+      const chainHexValue = chains.find((c) => c.chain.toLowerCase().includes(chain.toLowerCase()))?.hexChainId;
+      const params = {...parsed.params,chain:chainHexValue};
+      console.log("After Tools => ",tool,params);
 
-      const result = await tool.run(parsed.params);
+      const result = await tool.func(params);
       const summary = await this.NLP(result);
       return { data: JSON.stringify(result, null, 2), summary: summary };
     } catch (err) {
