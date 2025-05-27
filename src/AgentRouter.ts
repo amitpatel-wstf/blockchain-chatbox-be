@@ -32,6 +32,7 @@ export const chains = [
   { "chain": "Ethereum Mainnet",           "hexChainId": "0x1"    },
   { "chain": "BNB Smart Chain Mainnet",     "hexChainId": "0x38"   },
   { "chain": "Base",                        "hexChainId": "0x2105" },
+  { "chain": "base",                "hexChainId": "0x2105" },
   { "chain": "Berachain",                   "hexChainId": "0x138de"},
   { "chain": "Arbitrum One",                "hexChainId": "0xa4b1" },
   { "chain": "Avalanche C-Chain",           "hexChainId": "0xa86a" },

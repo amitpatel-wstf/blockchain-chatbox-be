@@ -23,10 +23,10 @@ export const walletTools = [
   },
   {
     name: 'getWalletActiveChains',
-    requiredParams: ['address'],
+    requiredParams: ['chain', 'address'],
     dataSchema: 'list: active blockchain names',
-    run: async ({ address }:{address:string}) => {
-      const res = await Moralis.EvmApi.wallets.getWalletActiveChains({ address });
+    run: async ({ chain, address }:{chain:string,address:string}) => {
+      const res = await Moralis.EvmApi.wallets.getWalletActiveChains({ chains: [chain], address });
       return res.raw;
     }
   },
