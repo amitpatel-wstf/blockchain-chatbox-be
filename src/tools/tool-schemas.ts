@@ -38,9 +38,25 @@ export const toolSchemas = [
       parameters: {
         type: "object",
         properties: {
+          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc')" },
           address: { type: "string", description: "The wallet address to query" }
         },
-        required: ["address"]
+        required: ["chain", "address"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "getWalletNetWorth",
+      description: "Get net worth for a wallet",
+      parameters: {
+        type: "object",
+        properties: {
+          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc')" },
+          address: { type: "string", description: "The wallet address to query" }
+        },
+        required: ["chain", "address"]
       }
     }
   },

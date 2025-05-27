@@ -40,10 +40,10 @@ export const tools = [
   },
   {
     name: 'getWalletNetWorth',
-    requiredParams: ['address'],
+    requiredParams: ['chain', 'address'],
     dataSchema: 'stat_card: total net worth in USD',
-    run: async ({ address }:{address:string}) => {
-      const res = await Moralis.EvmApi.wallets.getWalletNetWorth({ address });
+    run: async ({ chain, address }:{chain:string,address:string}) => {
+      const res = await Moralis.EvmApi.wallets.getWalletNetWorth({ chains: [chain], address });
       return res.raw;
     }
   },
