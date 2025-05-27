@@ -2,13 +2,13 @@ import { ChatOpenAI } from "@langchain/openai";
 import { OpenAI } from "openai"; // npm install openai
 import { ChatCompletionTool } from "openai/resources/chat/completions";
 import { tools } from "./tools";
+import { HUMAN_RESPONSE_PROMPT } from "./tools/constant";
+import { Tool } from "./tools/types";
+import { toolSchemas } from "./tools/tool-schemas";
 import { walletTools } from "./tools/wallet-tools";
 import { nftTools } from "./tools/NFT-Tools";
 import { tokenTools } from "./tools/Token-Tools";
 import { marketTools } from "./tools/Market-Tool";
-import { getInstruction, HUMAN_RESPONSE_PROMPT } from "./tools/constant";
-import { Tool } from "./tools/types";
-import { toolSchemas } from "./tools/tool-schemas";
 
 export interface AgentResponse {
   prompt: string;
@@ -38,55 +38,19 @@ export const chains = [
   { "chain": "Sonic Mainnet",               "hexChainId": "0x92"   },
   { "chain": "Hemi",                        "hexChainId": "0xa867" },
   { "chain": "Polygon Mainnet",             "hexChainId": "0x89"   },
-  { "chain": "Zircuit Mainnet",             "hexChainId": "0xbf04" },
   { "chain": "Core Blockchain Mainnet",     "hexChainId": "0x45c"  },
-  { "chain": "Unichain",                    "hexChainId": "0x82"   },
   { "chain": "Sei Network",                 "hexChainId": "0x531"  },
-  { "chain": "Cronos Mainnet",              "hexChainId": "0x19"   },
-  { "chain": "Bitlayer Mainnet",            "hexChainId": "0x310c5"},
-  
-  { "chain": "Metis Andromeda Mainnet",     "hexChainId": "0x440"  },
   { "chain": "Aurora Mainnet",              "hexChainId": "0x4E454152" },
   { "chain": "Fantom Opera",                "hexChainId": "0xFA"   },
   { "chain": "XDC Mainnet",                 "hexChainId": "0x32"   },
-  { "chain": "Evmos Mainnet",               "hexChainId": "0x2329" },
-  { "chain": "Theta Mainnet",               "hexChainId": "0x169"  },
-  { "chain": "Filecoin Main Network",       "hexChainId": "0x13A"  },
-  { "chain": "OKXChain",                    "hexChainId": "0x42"   },
   { "chain": "Moonbeam",                    "hexChainId": "0x504"  },
-  { "chain": "Gnosis",                      "hexChainId": "0x64"   },
-  { "chain": "Celo",                        "hexChainId": "0xA4EC" },
   
   { "chain": "Optimism",                    "hexChainId": "0xA"    },
-  { "chain": "Moonriver",                   "hexChainId": "0x505"  },
-  { "chain": "Klaytn Cypress",              "hexChainId": "0x2019" },
-  { "chain": "Ronin Mainnet",               "hexChainId": "0x7E4"  },
-  { "chain": "Palm Mainnet",                "hexChainId": "0x2A15C308D" },
-  { "chain": "Mantle",                      "hexChainId": "0x1388" },
   { "chain": "PulseChain",                  "hexChainId": "0x171"  },
   { "chain": "zkSync Mainnet",              "hexChainId": "0x144"  },
   { "chain": "Fuse Mainnet",                "hexChainId": "0x7A"   },
-  { "chain": "Harmony Mainnet (Shard 0)",   "hexChainId": "0x63564C40" },
-  { "chain": "IoTeX Mainnet",               "hexChainId": "0x1251" },
-  { "chain": "Telos EVM Mainnet",           "hexChainId": "0x28"   },
-  { "chain": "Boba Network",                "hexChainId": "0x120"  },
-  { "chain": "Boba BNB Mainnet",            "hexChainId": "0xDBE0" },
-  { "chain": "Shiden",                      "hexChainId": "0x150"  },
   
-  { "chain": "Arbitrum Nova",               "hexChainId": "0xA4EA" },
-  { "chain": "Ethereum Classic",            "hexChainId": "0x3D"   },
-  { "chain": "Energi Mainnet",              "hexChainId": "0x9B4D" },
-  { "chain": "Bitgert (Brise)",             "hexChainId": "0x7F08" },
-  { "chain": "Crab Network",                "hexChainId": "0x2C"   },
-  { "chain": "Energy Web Chain",            "hexChainId": "0xF6"   },
-  { "chain": "TomoChain",                   "hexChainId": "0x58"   },
-  { "chain": "Syscoin",                     "hexChainId": "0x39"   },
-  { "chain": "Ubiq",                        "hexChainId": "0x8"    },
-  { "chain": "LACHAIN",                     "hexChainId": "0xE1"   },
-  { "chain": "Milkomeda A1",                "hexChainId": "0x7D2"  },
-  { "chain": "HPB",                         "hexChainId": "0x10D"  },
-  { "chain": "CUBE Chain",                  "hexChainId": "0x71A"  },
-  { "chain": "GoChain",                     "hexChainId": "0x3C"   }
+  { "chain": "Arbitrum Nova",               "hexChainId": "0xA4EA" }
 ]
 
 
@@ -120,7 +84,7 @@ export class AIAgentRouter {
       function: {
         name: fn.function.name,
         description: fn.function.description,
-        parameters: fn.function.parameters
+        parameters: fn.function.parameters,
       }
     }));
     

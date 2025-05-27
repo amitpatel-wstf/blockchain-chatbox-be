@@ -5,10 +5,10 @@ import config from '../config';
 export const marketTools: any[] = [
   {
     name: 'getTrendingTokens',
-    requiredParams: [],
+    requiredParams: ["chain"],
     dataSchema: 'table: token, volume, trend score',
-    run: async () => {
-      const res = await fetch('https://deep-index.moralis.io/api/v2.2/tokens/trending?chain=eth', {
+    run: async ({ chain="eth" }: { chain?: string }) => {
+      const res = await fetch(`https://deep-index.moralis.io/api/v2.2/tokens/trending?chain=${chain}`, {
         headers: { accept: 'application/json', 'X-API-Key': config.MORALIS_KEY }
       });
       return res.json();
@@ -16,10 +16,10 @@ export const marketTools: any[] = [
   },
   {
     name: 'getTopGainersTokens',
-    requiredParams: [],
+    requiredParams: ["chain"],
     dataSchema: 'table: token, % gain, price, volume',
-    run: async () => {
-      const res = await fetch('https://deep-index.moralis.io/api/v2.2/discovery/tokens/top-gainers?chain=eth&min_market_cap=50000000&security_score=80&time_frame=1d', {
+    run: async ({ chain="eth", min_market_cap=50000000, security_score=80, time_frame="1d" }: { chain?: string, min_market_cap?: number, security_score?: number, time_frame?: string }) => {
+      const res = await fetch(`https://deep-index.moralis.io/api/v2.2/discovery/tokens/top-gainers?chain=${chain}&min_market_cap=${min_market_cap}&security_score=${security_score}&time_frame=${time_frame}`, {
         headers: { accept: 'application/json', 'X-API-Key': config.MORALIS_KEY }
       });
       return res.json();
@@ -36,10 +36,10 @@ export const marketTools: any[] = [
   },
   {
     name: 'searchTokens',
-    requiredParams: ['query'],
+    requiredParams: ['query', "chain"],
     dataSchema: 'list: token results sorted by relevance',
-    run: async ({ query }: { query: string }) => {
-      const res = await fetch(`https://deep-index.moralis.io/api/v2.2/tokens/search?query=${query}&chains=eth&limit=10&isVerifiedContract=true&sortBy=volume1hDesc&boostVerifiedContracts=true`, {
+    run: async ({ query, chain="eth", limit=10 }: { query: string, chain?: string, limit?: number }) => {
+      const res = await fetch(`https://deep-index.moralis.io/api/v2.2/tokens/search?query=${query}&chains=${chain}&limit=${limit}&isVerifiedContract=true&sortBy=volume1hDesc&boostVerifiedContracts=true`, {
         headers: { accept: 'application/json', 'X-API-Key': config.MORALIS_KEY }
       });
       return res.json();
@@ -47,9 +47,9 @@ export const marketTools: any[] = [
   },
   {
     name: 'getFilteredTokens',
-    requiredParams: ['filters', 'sortBy', 'limit'],
+    requiredParams: ['filters', "chain"],
     dataSchema: 'table: token, volume, market cap, score',
-    run: async ({ filters, sortBy, limit }: { filters: any; sortBy: any; limit: number }) => {
+    run: async ({ filters, sortBy, limit=10, chain="eth" }: { filters: any; sortBy: any; limit: number; chain?: string }) => {
       const res = await fetch('https://deep-index.moralis.io/api/v2.2/discovery/tokens', {
         method: 'POST',
         headers: {
@@ -57,7 +57,7 @@ export const marketTools: any[] = [
           'content-type': 'application/json',
           'X-API-Key': config.MORALIS_KEY
         },
-        body: JSON.stringify({ filters, sortBy, limit, chain: '0x1' })
+        body: JSON.stringify({ filters, sortBy, limit, chain: chain })
       });
       return res.json();
     }

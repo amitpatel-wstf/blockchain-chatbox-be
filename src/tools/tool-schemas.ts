@@ -8,7 +8,7 @@ export const toolSchemas = [
       parameters: {
         type: "object",
         properties: {
-          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc')" },
+          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc' , 'base' )" },
           address: { type: "string", description: "The wallet address to query" }
         },
         required: ["chain", "address"]
@@ -38,9 +38,10 @@ export const toolSchemas = [
       parameters: {
         type: "object",
         properties: {
+          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc' , 'base' )" },
           address: { type: "string", description: "The wallet address to query" }
         },
-        required: ["address"]
+        required: ["chain", "address"]
       }
     }
   },
@@ -68,7 +69,9 @@ export const toolSchemas = [
         type: "object",
         properties: {
           address: { type: "string", description: "The wallet address to query" },
-          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc')", default: "eth" }
+          chain: { type: "string", description: "The blockchain network (e.g., 'eth', 'bsc')", default: "eth" },
+          order: { type: "string", description: "The order of the results (e.g., 'asc', 'desc')", default: "desc" },
+          limit: { type: "number", description: "The maximum number of results", default: 10 }
         },
         required: ["address"]
       }
@@ -314,12 +317,13 @@ export const toolSchemas = [
       parameters: {
         type: "object",
         properties: {
+          chain: { type: "string", description: "Blockchain network" },
           address: { type: "string", description: "Token contract address" },
           fromDate: { type: "string", description: "Start date (YYYY-MM-DD)" },
           toDate: { type: "string", description: "End date (YYYY-MM-DD)" },
           timeFrame: { type: "string", description: "Time frame for data points (e.g., '1d', '1w')" }
         },
-        required: ["address", "fromDate", "toDate", "timeFrame"]
+        required: ["chain","address"]
       }
     }
   },
@@ -342,7 +346,7 @@ export const toolSchemas = [
     type: "function",
     function: {
       name: "getTokenStats",
-      description: "Get statistics for a token",
+      description: "Get statistics for a token ",
       parameters: {
         type: "object",
         properties: {
@@ -382,6 +386,21 @@ export const toolSchemas = [
           query: { type: "string", description: "Search query for tokens" }
         },
         required: ["query"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "getWalletNetWorth",
+      description: "Get net worth of a wallet on any blockchain ",
+      parameters: {
+        type: "object",
+        properties: {
+          chain: { type: "string", description: "Blockchain network" },
+          address: { type: "string", description: "Wallet address" }
+        },
+        required: ["chain", "address"]
       }
     }
   }

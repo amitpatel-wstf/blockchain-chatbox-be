@@ -3,6 +3,7 @@ import config from './config';
 import cors from 'cors';
 import { BlockchainChatSDK } from './BlockchainChatSDK';
 import { prompts } from './tools/constant';
+import Moralis from 'moralis';
 export {BlockchainChatSDK};
 
 

@@ -23,19 +23,19 @@ export const walletTools = [
   },
   {
     name: 'getWalletActiveChains',
-    requiredParams: ['address'],
+    requiredParams: ['address' , 'chain'],
     dataSchema: 'list: active blockchain names',
-    run: async ({ address }:{address:string}) => {
-      const res = await Moralis.EvmApi.wallets.getWalletActiveChains({ address });
+    run: async ({ address, chain='0x1' }:{address:string, chain:string}) => {
+      const res = await Moralis.EvmApi.wallets.getWalletActiveChains({ address, chains:[chain] });
       return res.raw;
     }
   },
   {
     name: 'getWalletNetWorth',
-    requiredParams: ['address'],
+    requiredParams: ['address','chain'],
     dataSchema: 'stat_card: total net worth in USD',
-    run: async ({ address }:{address:string}) => {
-      const res = await Moralis.EvmApi.wallets.getWalletNetWorth({ address });
+    run: async ({ address,chain="0x1" }:{address:string,chain?:string}) => {
+      const res = await Moralis.EvmApi.wallets.getWalletNetWorth({ address,chains:[chain] });
       return res.raw;
     }
   },
